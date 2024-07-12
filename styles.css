@@ -1,0 +1,62 @@
+
+body, .inputs, .conversionSelector, .imageInput {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background-color: #232323;
+	color: white;
+	row-gap: 1vh;
+}
+
+#paletta {
+	/* lol */
+	image-rendering: pixelated;
+	image-rendering: -moz-crisp-edges;
+	width: 0px;
+	height: 0px;
+}
+
+.labels {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	min-width: 100%;
+}
+
+.inputs, .labels {
+	flex-direction: row;
+	gap: 18vw;
+}
+
+.imagesContainer{
+	display: flex; 
+        justify-content: center;
+}
+
+.inputImage {
+	margin-right: 2vw;
+        max-width:40%;
+    height:auto;
+}
+
+#imgout {
+	image-rendering: pixelated;
+	image-rendering: -moz-crisp-edges;
+        max-width:40%;
+    height:auto;
+}
+
+
+button {
+	font-size: 30px;
+	border-radius: 4px;
+	padding: 5px 10px;
+	background-color: #232323;
+	color: white;
+ }
+
+ button:hover {
+	 cursor: pointer;
+	 opacity: 0.8
+}
