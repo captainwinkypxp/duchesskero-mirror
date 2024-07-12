@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PixelPlace.io - Image Converter</title>
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="stylesheet" href="styles.css">
+        <script type='text/javascript' src="RgbQuant.js"></script>
+        <script>
+            function processImage() {
+                for (var t = document.getElementsByTagName("canvas"); t[0];) t[0].parentNode.removeChild(t[0]);
+                var i = document.getElementById("img");
+                console.time("quant"), q.dithKern = document.getElementById("dithKern").value, q.sample(i);
+                var e = q.palette(),
+                    r = q.reduce(i);
+                console.timeEnd("quant"), putPixels(r, i.naturalWidth, i.naturalHeight, "imgout"), putPixels(e, 8, 8, "paletta")
+            }
+
+            function putPixels(subpxArr, width, height, id) {
+                var can = document.createElement("canvas");
+                id && can.setAttribute("id", id),
+                    can.width = width,
+                    can.height = height;
+                var ctx = can.getContext("2d"),
+                    imgd = ctx.createImageData(can.width, can.height);
+                imgd.data.set(subpxArr), ctx.putImageData(imgd, 0, 0),
+                    imgContainer = document.getElementsByClassName("imagesContainer")[0]
+                imgContainer.appendChild(can)
+            }
+
+            var pixelplace = [
+                [255, 255, 255],
+                [196, 196, 196],
+                [136, 136, 136],
+                [85, 85, 85],
+                [34, 34, 34],
+                [0, 0, 0],
+                [0, 102, 0],
+                [34, 177, 76],
+                [2, 190, 1],
+                [81, 225, 25],
+                [148, 224, 68],
+                [251, 255, 91],
+                [229, 217, 0],
+                [230, 190, 12],
+                [229, 149, 0],
+                [160, 106, 66],
+                [153, 83, 13],
+                [99, 60, 31],
+                [107, 0, 0],
+                [159, 0, 0],
+                [229, 0, 0],
+                [255, 57, 4],
+                [187, 79, 0],
+                [255, 117, 95],
+                [255, 196, 159],
+                [255, 223, 204],
+                [255, 167, 209],
+                [207, 110, 228],
+                [236, 8, 236],
+                [130, 0, 128],
+                [81, 0, 255],
+                [2, 7, 99],
+                [0, 0, 234],
+                [4, 75, 255],
+                [101, 131, 207],
+                [54, 186, 255],
+                [0, 131, 199],
+                [0, 211, 221],
+                [0, 54, 56],
+                [71, 112, 80],
+                [152, 251, 152],
+                [255, 112, 0],
+                [206, 41, 57],
+                [255, 65, 106],
+                [125, 38, 205],
+                [51, 0, 119],
+                [0, 91, 161],
+                [181, 232, 238],
+                [27, 116, 0],
+            ],
+                q = new RgbQuant({
+                    colors: 49,
+                    palette: pixelplace,
+                    reIndex: !0,
+                    dithKern: "FloydSteinberg",
+                    dithDelta: .05,
+                    useCache: !1
+                });
+            window.onload = function () {
+                document.getElementById("dithKern").onchange = function (t) {
+                    processImage()
+                }, document.getElementById("getimg").addEventListener("change", function () {
+                    var t = document.getElementById("getimg").files[0],
+                        i = new FileReader;
+                    i.onloadend = function () {
+                        document.getElementById("img").setAttribute("src", i.result), setTimeout(processImage, 500)
+                    },
+                        t && i.readAsDataURL(t)
+                }, !0), processImage()
+            };
+
+            function downloadCanvas() {
+                var canvas = document.getElementById("imgout");
+                var img = canvas.toDataURL();
+                var tmpLink = document.createElement("a");
+                var afilepath = document.getElementById("getimg").value;
+                var file = afilepath.replace(/^.*[\\\/]/, '').slice(0, -4)
+                tmpLink.download = file + "_" + document.getElementById("dithKern").value + ".png";
+                tmpLink.href = img;
+                document.body.appendChild(tmpLink);
+                tmpLink.click();
+                document.body.removeChild(tmpLink);
+            }
+        </script>
+    </head>
+
+    <body>
+        <div class="inputs">
+            <div class="imageInput">
+                <h2>Select your image</h2>
+                <input type="file" id="getimg" />
+            </div>
+            <div class="conversionSelector">
+                <h2>Conversion Strategy</h2>
+                <select id="dithKern">
+                    <option value="">Default</option>
+                    <option value="FloydSteinberg" selected>FloydSteinberg</option>
+                    <option value="Stucki">Stucki</option>
+                    <option value="Atkinson">Atkinson</option>
+                    <option value="Jarvis">Jarvis</option>
+                    <option value="Burkes">Burkes</option>
+                    <option value="Sierra">Sierra</option>
+                    <option value="TwoSierra">TwoSierra</option>
+                    <option value="SierraLite">SierraLite</option>
+                    <option value="FalseFloydSteinberg">FalseFloyd</option>
+                </select>
+            </div>
+        </div>
+
+        <br>
+        <div class="imagesContainer">
+            <img id="img" class="inputImage" src="vpPlace.jpg" alt="">
+        </div>
+        <div class="labels">
+            <h2>Input Image</h2>
+            <h2>Converted image</h2>
+        </div>
+        <button onClick="downloadCanvas()">Download converted Image</button>
+    </body>
+
+</html>
